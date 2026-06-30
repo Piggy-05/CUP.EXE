@@ -1,0 +1,203 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>CUP.EXE - CUSTOM_LAB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* ================= 基础系统与光效（和大厅保持完全一致） ================= */
+        body {
+            background-color: #050814; /* 极深蓝背景 */
+            color: #ffffff;
+            font-family: 'Press Start 2P', cursive;
+            margin: 0; padding: 0;
+            background-image: linear-gradient(rgba(26, 42, 74, 0.4) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(26, 42, 74, 0.4) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        /* 顶部导航控制台 */
+        .top-nav {
+            background-color: #0a0f24;
+            border-bottom: 4px solid #ffffff;
+            padding: 20px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.3); /* 底部微透紫光 */
+        }
+        .nav-player { font-size: 14px; text-shadow: 2px 2px #bc13fe; }
+        .nav-controls a { color: #ffffff; text-decoration: none; margin-left: 30px; font-size: 12px; transition: 0.2s; }
+        .nav-controls a:hover { color: #bc13fe; text-shadow: 0 0 10px #ffffff; }
+
+        /* 实验室主体布局 */
+        .lab-container { max-width: 800px; margin: 40px auto; padding: 20px; }
+        .lab-header { text-align: center; margin-bottom: 50px; }
+        .lab-title { font-size: 28px; letter-spacing: 4px; text-shadow: 3px 3px #bc13fe; margin: 0; }
+        .lab-warning { font-size: 12px; color: #aaaaaa; margin-top: 15px; }
+
+        /* ================= 调配模块框（延续白色卡片风格） ================= */
+        .module-box {
+            background-color: #0a0f24;
+            border: 4px solid #ffffff;
+            padding: 30px; margin-bottom: 40px;
+            transition: all 0.3s ease;
+        }
+
+        /* 模块悬停时亮紫光，和大厅卡片一样 */
+        .module-box:hover {
+            border-color: #bc13fe;
+            box-shadow: 0 0 25px rgba(188, 19, 254, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .module-title { font-size: 14px; margin-bottom: 25px; border-bottom: 2px solid #334466; padding-bottom: 15px; color: #bc13fe; text-shadow: 1px 1px #ffffff;}
+
+        /* 自定义单选/复选框样式 */
+        .option-label {
+            display: block; cursor: pointer; font-size: 12px; margin-bottom: 20px; line-height: 1.5;
+            transition: 0.2s;
+        }
+        .option-label:hover { text-shadow: 0 0 8px #ffffff; color: #bc13fe; }
+
+        input[type="radio"], input[type="checkbox"] {
+            margin-right: 15px;
+            accent-color: #bc13fe; /* 选中时变成紫色 */
+            transform: scale(1.2);
+        }
+
+        .price-tag {
+            color: #00ff41;
+            float: right;
+            white-space: nowrap;   # 强制不换行，死死锁在一起！
+        } /* 价格统一保留经典的游侠绿 */
+
+        /* ================= 像素合成按钮 ================= */
+        .pixel-btn {
+            width: 100%; background-color: transparent; color: #ffffff; border: 4px solid #ffffff;
+            font-family: 'Press Start 2P', cursive; font-size: 14px; padding: 18px; cursor: pointer; transition: all 0.2s;
+            margin-bottom: 50px;
+        }
+        .pixel-btn:hover { background-color: #ffffff; color: #0a0f24; box-shadow: 0 0 20px #bc13fe; }
+
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <div class="nav-player">> DEV MODE: {{ request.user.username }}</div>
+        <div class="nav-controls">
+            <a href="/wallet/" style="color: #00ff41; text-shadow: 0 0 5px #00ff41;">[ 🎒 INVENTORY ]</a>
+            <a href="/cart/">[ CART ]</a>
+            <a href="/">[ BACK ]</a>
+        </div>
+    </nav>
+
+    <div class="lab-container">
+        <div class="lab-header">
+            <h1 class="lab-title">CUSTOM LAB</h1>
+            <div class="lab-warning">>> MIX YOUR OWN BASE FLUIDS & MODULES <<</div>
+        </div>
+
+        <form action="/add_diy_to_cart/" method="POST">
+            {% csrf_token %}
+
+            <div class="module-box">
+                <div class="module-title">> STEP 1: SELECT BASE LIQUID</div>
+                <label class="option-label">
+                    <input type="radio" name="base" value="Grapefruit Syrup|3.0" required>
+                    [01] GRAPEFRUIT SYRUP <span class="price-tag">🪙 3.0</span>
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="base" value="Jasmine Green Tea|2.5" required>
+                    [02] JASMINE GREEN TEA <span class="price-tag">🪙 2.5</span>
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="base" value="Strawberry Cordial|3.0" required>
+                    [03] STRAWBERRY CORDIAL <span class="price-tag">🪙 3.0</span>
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="base" value="Blackcurrant Cordial|4.0" required>
+                    [04] BLACKCURRANT CORDIAL <span class="price-tag">🪙 4.0</span>
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="base" value="Peach Syrup|3.0" required>
+                    [05] PEACH SYRUP <span class="price-tag">🪙 3.0</span>
+                </label>
+            </div>
+
+            <div class="module-box">
+                <div class="module-title">> STEP 2: INSTALL FLAVOR MODULES</div>
+                <label class="option-label">
+                    <input type="checkbox" name="flavor" value="Soda Water|2.0" required>
+                    [+] SODA WATER <span class="price-tag">🪙 2.0</span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="flavor" value="Tonic Water|2.0" required>
+                    [+] TONIC WATER <span class="price-tag">🪙 2.0</span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="flavor" value="100 Plus|2.0" required>
+                    [+] 100 PLUS <span class="price-tag">🪙 2.0</span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="flavor" value="Ice Water|1.0" required>
+                    [+] ICE WATER <span class="price-tag">🪙 1.0</span>
+                </label>
+            </div>
+
+            <div class="module-box">
+                <div class="module-title">> STEP 3: FINISHING TOUCH</div>
+                <label class="option-label">
+                    <input type="checkbox" name="touch" value="Lime|0.5" required>
+                    [+] LIME <span class="price-tag">🪙 0.5</span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="touch" value="Lemon|0.5" required>
+                    [+] LEMON <span class="price-tag">🪙 0.5</span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="touch" value="Rosemary|1.0" required>
+                    [+] ROSEMARY <span class="price-tag">🪙 1.0</span>
+                </label>
+            </div>
+
+            <div class="module-box" style="border-color: #00bfff; box-shadow: 0 0 15px rgba(0, 191, 255, 0.2);">
+                <div class="module-title" style="color: #00bfff;">> STEP 4: HARDWARE PROTOCOL (CUP)</div>
+                <label class="option-label" style="color: #00bfff; text-shadow: 0 0 5px #00bfff;">
+                    <input type="radio" name="hardware_cup" value="Standard Cup|1.0" checked required onclick="return false;">
+                    [LOCKED] STANDARD CUP <span class="price-tag">🪙 1.0</span>
+                </label>
+            </div>
+
+            <button type="submit" class="pixel-btn">> SYNTHESIZE & ADD_TO_CART</button>
+        </form>
+    </div>
+
+    <script>
+        // 定义一个通用功能：只要传入名字，它就会监控“最少选一个”
+        function enforceAtLeastOne(inputName) {
+            const checkboxes = document.querySelectorAll(`input[name="${inputName}"]`);
+
+            function check() {
+                // 检查有没有打勾的
+                const isChecked = Array.from(checkboxes).some(box => box.checked);
+                // 如果勾了任何一个，就解除所有框的 required；如果全没勾，就恢复 required
+                checkboxes.forEach(box => box.required = !isChecked);
+            }
+
+            // 给每个框绑上事件
+            checkboxes.forEach(box => box.addEventListener('change', check));
+            // 网页加载时先检查一次
+            check();
+        }
+
+        // 🚀 启动保安系统！
+        enforceAtLeastOne('flavor'); // 严格监控 Step 2
+        enforceAtLeastOne('touch');  // 严格监控 Step 3
+    </script>
+
+</body>
+</html>
+
+</body>
+</html>

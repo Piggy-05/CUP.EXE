@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>CUP.EXE - TNG SCAN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #050814; color: #ffffff; font-family: 'Press Start 2P', cursive;
+            text-align: center; margin-top: 50px;
+        }
+        .qr-box {
+            background-color: #ffffff; padding: 20px; display: inline-block;
+            border: 4px solid #bc13fe; margin: 30px 0;
+        }
+        .qr-img { width: 250px; height: 250px; }
+        .pixel-btn {
+            background-color: #00ff41; color: #050814; border: 4px solid #ffffff;
+            font-family: 'Press Start 2P', cursive; font-size: 14px; padding: 15px 30px;
+            cursor: pointer; text-decoration: none; display: inline-block; margin-top: 20px;
+        }
+        .pixel-btn:hover { background-color: #ffffff; box-shadow: 0 0 20px #00ff41; }
+    </style>
+</head>
+<body>
+
+    <h2 style="color: #00bfff;">E-WALLET SCAN</h2>
+
+    <div style="background-color: #1a0f24; border: 2px dashed #ff0055; padding: 15px; margin: 20px auto; width: 450px; font-size: 11px; line-height: 1.6;">
+        <span style="color: #ff0055;">⚠️ CRITICAL PROTOCOL:</span><br>
+        Please enter <span style="color: #00ff41; font-size: 14px;">#CUP-{{ order.id }}</span> in the <span style="color: #00bfff;">Transaction Reference/Remarks</span> when transferring!
+        Orders without a valid reference will be terminated.
+    </div>
+
+    <div class="qr-box">
+        <img src="{% static 'tng_qr.png' %}" class="qr-img">
+    </div>
+
+    <br>
+
+    <a href="/success/" class="pixel-btn">> I HAVE PAID [GET REWARD]</a>
+
+</body>
+</html>

@@ -1,0 +1,193 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>CUP.EXE - ITEM_SHOP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* ================= 基础系统与光效 ================= */
+        body {
+            background-color: #050814; /* 极深蓝背景 */
+            color: #ffffff;
+            font-family: 'Press Start 2P', cursive;
+            margin: 0;
+            padding: 0;
+            /* 蓝色网格线暗纹，增加复古显示器质感 */
+            background-image: linear-gradient(rgba(26, 42, 74, 0.4) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(26, 42, 74, 0.4) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        /* ================= 顶部导航控制台 ================= */
+        .top-nav {
+            background-color: #0a0f24;
+            border-bottom: 4px solid #ffffff;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.3); /* 底部微透紫光 */
+        }
+
+        .nav-player {
+            font-size: 14px;
+            color: #ffffff;
+            text-shadow: 2px 2px #bc13fe;
+        }
+
+        .nav-controls a {
+            color: #ffffff;
+            text-decoration: none;
+            margin-left: 30px;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+
+        .nav-controls a:hover {
+            color: #bc13fe;
+            text-shadow: 0 0 10px #ffffff;
+        }
+
+        /* ================= 大厅标题区 ================= */
+        .shop-header {
+            text-align: center;
+            margin: 50px 0;
+        }
+
+        .shop-title {
+            font-size: 32px;
+            letter-spacing: 4px;
+            text-shadow: 3px 3px #bc13fe;
+            margin: 0;
+        }
+
+        .shop-subtitle {
+            font-size: 12px;
+            color: #aaaaaa;
+            margin-top: 15px;
+        }
+
+        /* ================= 货架网格布局 ================= */
+        .drink-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* 自动响应式换行 */
+            gap: 40px;
+            padding: 0 50px 100px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ================= 饮料道具卡片 ================= */
+        .drink-card {
+            background-color: #0a0f24;
+            border: 4px solid #ffffff;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* 卡片悬停效果：向上浮动并发紫光 */
+        .drink-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 25px rgba(188, 19, 254, 0.5);
+            border-color: #bc13fe;
+        }
+
+        /* 🌟 核心：专门为你手画像素图准备的图片框 */
+        .drink-img-box {
+            height: 140px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .drink-img {
+            max-width: 120px;
+            max-height: 120px;
+            /* 🚨 绝对核心属性：这行代码保证你画的像素图放大后边缘依然是方块，不会变模糊！ */
+            image-rendering: pixelated;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+        }
+
+        /* 如果没上传图片时的问号占位符 */
+        .no-img {
+            font-size: 40px;
+            color: #334466;
+        }
+
+        .drink-name {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .drink-price {
+            font-size: 16px;
+            color: #00ff41; /* 价格用经典的游侠绿，增加“获取资源”的感觉 */
+            margin-bottom: 20px;
+        }
+
+        /* 像素风按钮 */
+        .pixel-btn {
+            width: 100%;
+            background-color: transparent;
+            color: #ffffff;
+            border: 4px solid #ffffff;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pixel-btn:hover {
+            background-color: #ffffff;
+            color: #0a0f24;
+            box-shadow: 0 0 15px #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <div class="nav-player">
+            > PLAYER ID: {{ request.user.username }}<span style="animation: blinker 1s linear infinite;">_</span>
+        </div>
+        <div class="nav-controls">
+            <a href="/wallet/" style="color: #00ff41; text-shadow: 0 0 5px #00ff41;">[ 🎒 INVENTORY ]</a>
+            <a href="/cart/">[ CART ]</a>
+            <a href="/">[ BACK ]</a>
+        </div>
+    </nav>
+
+    <div class="shop-header">
+        <h1 class="shop-title">ITEM SHOP</h1>
+        <p class="shop-subtitle">SELECT YOUR DRINK POTION</p>
+    </div>
+
+    <div class="drink-grid">
+        {% for drink in drinks %}
+        <div class="drink-card">
+
+            <div class="drink-img-box">
+                <img src="{% static 'drink_' %}{{ drink.id }}.png" alt="{{ drink.name }}" class="drink-img">
+            </div>
+
+            <h3 class="drink-name">{{ drink.name }}</h3>
+            <div class="drink-price">🪙 {{ drink.price }}</div>
+
+            <form action="/add_to_cart/" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="drink_id" value="{{ drink.id }}">
+                <button type="submit" class="pixel-btn">+ ADD TO CART</button>
+            </form>
+
+        </div>
+        {% endfor %}
+    </div>
+
+</body>
+</html>

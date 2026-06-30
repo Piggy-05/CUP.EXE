@@ -1,0 +1,209 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>CUP.EXE - SYSTEM_LOGIN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* ================= 基础系统与光效 ================= */
+        body {
+            background-color: #0d1117; /* 第一版的午夜深蓝背景 */
+            color: #ffffff; /* 纯白文字 */
+            font-family: 'Press Start 2P', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            /* 保留环境光，但把黑客绿改成了赛博紫的幽光 */
+            background-image:
+                radial-gradient(circle at 50% 50%, rgba(188, 19, 254, 0.08) 0%, transparent 60%);
+        }
+
+        /* ================= 登录窗口 (白线 + 紫光) ================= */
+        .login-window {
+            background-color: #0a0f24;
+            border: 4px solid #ffffff; /* 🌟 纯白边缘线 */
+            box-shadow: 0 0 35px rgba(188, 19, 254, 0.4); /* 🌟 保留第一版的赛博紫发光 */
+            padding: 40px 60px;
+            width: 450px;
+            position: relative;
+            text-align: center;
+        }
+
+        .window-top {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 14px;
+            color: #888;
+            letter-spacing: 5px;
+        }
+
+        /* ================= 🌟 品牌与泡泡动态区 ================= */
+        .brand-header {
+            display: flex;
+            align-items: flex-end; /* 底部对齐 */
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            margin-top: 10px;
+        }
+
+        /* 杯子与泡泡的微缩容器 */
+        .logo-container {
+            position: relative;
+            width: 65px;
+            height: 75px;
+        }
+
+        .login-logo {
+            width: 65px;
+            position: absolute;
+            bottom: 0; left: 0;
+            z-index: 3;
+            image-rendering: pixelated;
+        }
+
+        /* 微缩版泡泡样式 */
+        .pixel-bubble {
+            position: absolute;
+            z-index: 1; opacity: 0;
+            image-rendering: pixelated;
+        }
+        .big-bubble-style { width: 10px; animation: floatBig 4s infinite linear; }
+        .small-bubble-style { width: 6px; animation: floatSmall 2.8s infinite linear; }
+
+        .bubble-1 { bottom: 25px; left: 15px; animation-delay: 0s; }
+        .bubble-2 { bottom: 30px; left: 30px; animation-delay: 0.8s; }
+        .bubble-3 { bottom: 20px; left: 45px; animation-delay: 1.6s; }
+        .bubble-4 { bottom: 25px; left: 25px; animation-delay: 2.4s; }
+
+        @keyframes floatBig {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.9; }
+            40% { transform: translateY(-40px) translateX(-10px); }
+            70% { transform: translateY(-80px) translateX(10px); opacity: 0.8; }
+            100% { transform: translateY(-130px) translateX(-5px); opacity: 0; } /* 往上飘出登录框 */
+        }
+        @keyframes floatSmall {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            15% { opacity: 1; }
+            30% { transform: translateY(-30px) translateX(8px); }
+            60% { transform: translateY(-70px) translateX(-8px); }
+            85% { opacity: 0.7; }
+            100% { transform: translateY(-110px) translateX(5px); opacity: 0; }
+        }
+
+        .brand-title {
+            font-size: 26px;
+            color: #ffffff;
+            margin: 0;
+            padding-bottom: 10px;
+            text-shadow: 2px 2px #bc13fe; /* 标题带点紫光阴影 */
+            letter-spacing: 2px;
+        }
+
+        /* ================= 终端指令输入区 (第一版风格) ================= */
+        h2 {
+            font-size: 16px;
+            margin-bottom: 35px;
+            color: #ffffff;
+            letter-spacing: 2px;
+        }
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+
+        .input-group { text-align: left; margin-bottom: 30px; }
+        .input-group label {
+            display: block; font-size: 12px; color: #aaaaaa; margin-bottom: 10px;
+        }
+
+        /* 纯白输入，发紫光 */
+        .input-group input {
+            width: 100%;
+            background: transparent; border: none;
+            border-bottom: 4px solid #1a2a4a;
+            color: #ffffff; /* 🌟 纯白打字 */
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px; padding: 10px 5px; outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-bottom: 4px solid #ffffff; /* 白底线 */
+            box-shadow: 0 10px 10px -10px rgba(188, 19, 254, 0.8); /* 🌟 赛博紫发光 */
+        }
+
+        .error-msg {
+            color: #ff003c; font-size: 10px; margin-bottom: 20px;
+            text-shadow: 0 0 5px #ff003c;
+        }
+
+        /* 纯白交互按钮 */
+        .pixel-btn {
+            width: 100%; background-color: transparent;
+            color: #ffffff; border: 4px solid #ffffff;
+            font-family: 'Press Start 2P', cursive; font-size: 14px;
+            padding: 15px; margin-top: 10px; cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pixel-btn:hover {
+            background-color: #ffffff; color: #0a0f24;
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.6); /* 悬停时紫光爆发 */
+        }
+
+        .link-text { margin-top: 30px; font-size: 10px; color: #888; }
+        .link-text a {
+            color: #bc13fe; text-decoration: none; margin-left: 10px; transition: 0.3s;
+        }
+        .link-text a:hover { color: #ffffff; text-shadow: 0 0 10px #bc13fe; }
+
+    </style>
+</head>
+<body>
+
+    <div class="login-window">
+        <div class="window-top">_ □ X</div>
+
+        <div class="brand-header">
+            <div class="logo-container">
+                <img src="{% static 'logo_cup.png' %}" alt="Logo" class="login-logo">
+                <img src="{% static 'pixel_bigbubble.png' %}" class="pixel-bubble big-bubble-style bubble-1" alt="Bubble">
+                <img src="{% static 'pixel_smallbubble.png' %}" class="pixel-bubble small-bubble-style bubble-2" alt="Bubble">
+                <img src="{% static 'pixel_smallbubble.png' %}" class="pixel-bubble small-bubble-style bubble-3" alt="Bubble">
+                <img src="{% static 'pixel_bigbubble.png' %}" class="pixel-bubble big-bubble-style bubble-4" alt="Bubble">
+            </div>
+            <h1 class="brand-title">CUP.EXE</h1>
+        </div>
+
+        <h2>> AUTH REQUIRED<span class="blink">_</span></h2>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="input-group">
+                <label for="id_username">> ID:</label>
+                <input type="text" name="username" id="id_username" autocomplete="off" required>
+            </div>
+
+            <div class="input-group">
+                <label for="id_password">> PASSWORD:</label>
+                <input type="password" name="password" id="id_password" required>
+            </div>
+
+            {% if form.errors %}
+                <p class="error-msg">>> ERROR: ACCESS DENIED.</p>
+            {% endif %}
+
+            <button type="submit" class="pixel-btn">> RUN FILE</button>
+        </form>
+
+        <p class="link-text">GUEST USER? <a href="/register/">INSTALL NEW ACCOUNT!</a></p>
+    </div>
+
+</body>
+</html>

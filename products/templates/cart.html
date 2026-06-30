@@ -1,0 +1,248 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>CUP.EXE - PENDING_TASKS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* ================= 基础系统与光效 ================= */
+        body {
+            background-color: #050814;
+            color: #ffffff;
+            font-family: 'Press Start 2P', cursive;
+            margin: 0; padding: 0;
+            background-image: linear-gradient(rgba(26, 42, 74, 0.4) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(26, 42, 74, 0.4) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        /* 顶部导航 */
+        .top-nav {
+            background-color: #0a0f24;
+            border-bottom: 4px solid #ffffff;
+            padding: 20px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-player { font-size: 14px; text-shadow: 2px 2px #bc13fe; }
+        .nav-controls a { color: #ffffff; text-decoration: none; margin-left: 30px; font-size: 12px; }
+        .nav-controls a:hover { color: #bc13fe; text-shadow: 0 0 10px #ffffff; }
+
+        /* 购物车主容器 */
+        .cart-container { max-width: 800px; margin: 40px auto; padding: 20px; }
+        .cart-header { text-align: center; margin-bottom: 50px; }
+        .cart-title { font-size: 24px; text-shadow: 3px 3px #bc13fe; }
+
+        /* ================= 饮料项目列表（系统任务流风格） ================= */
+        .cart-empty {
+            text-align: center; border: 4px dashed #334466; padding: 40px; color: #aaaaaa; font-size: 12px;
+        }
+
+        .cart-item {
+            background-color: #0a0f24;
+            border: 4px solid #ffffff;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+        }
+        .cart-item:hover {
+            border-color: #bc13fe;
+            box-shadow: 0 0 15px rgba(188, 19, 254, 0.4);
+        }
+
+        .item-info {
+            display: flex; flex-direction: column; gap: 8px;
+            flex: 1;
+            padding-right: 20px;
+        }
+        .item-name {
+            font-size: 12px; letter-spacing: 1px; line-height: 1.4;
+            word-wrap: break-word;
+        }
+        .item-type { font-size: 8px; color: #bc13fe; }
+        .item-price {
+            font-size: 12px; color: #00ff41;
+            white-space: nowrap;
+        }
+
+        /* ================= 总价与结算控制台 ================= */
+        .summary-box {
+            border-top: 4px double #ffffff;
+            margin-top: 40px;
+            padding-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .total-label { font-size: 14px; }
+        .total-amount { font-size: 20px; color: #00ff41; text-shadow: 0 0 10px rgba(0, 255, 65, 0.5); }
+
+        /* 提交结算按钮 */
+        .checkout-btn {
+            width: 100%;
+            background-color: transparent;
+            color: #ffffff;
+            border: 4px solid #ffffff;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 16px;
+            padding: 20px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.2s;
+            margin-bottom: 60px;
+        }
+        .checkout-btn:hover {
+            background-color: #ffffff;
+            color: #0a0f24;
+            box-shadow: 0 0 25px #bc13fe;
+        }
+
+        .cancel-btn { /* 中止/清空按钮样式 */
+            width: 100%;
+            background-color: transparent; /* 透明底色 */
+            color: #ffffff;                /* 🌟 恢复纯白像素字体 */
+            border: 4px solid #ffffff;     /* 🌟 恢复纯白像素边缘线 */
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            padding: 15px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.2s;
+        }
+
+        /* 鼠标悬停时的致命红光警告 */
+        .cancel-btn:hover {
+            background-color: #ff003c;
+            border-color: #ff003c;
+            color: #ffffff;
+            box-shadow: 0 0 25px #ff003c;
+        }
+
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <div class="nav-player">> USER: {{ request.user.username }}</div>
+        <div class="nav-controls">
+            <a href="/">[ CONTINUE SHOPPING ]</a>
+        </div>
+    </nav>
+
+    <div class="cart-container">
+        <div class="cart-header">
+            <h1 class="cart-title">PENDING TASKS<span class="blink">_</span></h1>
+        </div>
+
+        {% if not cart_items %}
+            <div class="cart-empty">
+                [ CART IS EMPTY. NO DATA FOUND ]
+            </div>
+        {% else %}
+            <div class="cart-list">
+                {% for item in cart_items %}
+                    <div class="cart-item">
+                        <div class="item-info">
+                            <div class="item-name">{{ item.name }}</div>
+                            <div class="item-type">
+                                {% if "DIY:" in item.name %}
+                                    [ TYPE: CUSTOM COMPOUND ]
+                                {% else %}
+                                    [ TYPE: STANDARD PROTOCOL ]
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="item-price">🪙 {{ item.price|floatformat:1 }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% if coupons %}
+            <div class="module-box" style="border-color: #00ff41; margin-top: 30px;">
+                <div class="module-title" style="color: #00ff41;">> SELECT ONE REWARD CHIP (MAX 1)</div>
+
+                <label class="option-label" style="color: #aaaaaa;">
+                    <input type="radio" name="selected_coupon_id" value="none" checked data-amount="0">
+                    [x] DO NOT USE ANY COUPON CHIP (SAVE FOR LATER)
+                </label>
+
+                {% for coupon in coupons %}
+                    <label class="option-label">
+                        <input type="radio" name="selected_coupon_id" value="{{ coupon.id }}" data-amount="{{ coupon.amount }}">
+                        {{ coupon.name }} <span class="price-tag">🪙 -{{ coupon.amount }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+            <div class="summary-box" style="flex-direction: column; align-items: stretch; gap: 15px;">
+
+                <div style="display: flex; justify-content: space-between; color: #aaaaaa; font-size: 12px;">
+                    <span>> BASE CORE COST:</span>
+                    <span>🪙 <span id="base-price">{{ total|floatformat:1 }}</span></span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; color: #ff0055; font-size: 12px;">
+                    <span>> CHIP DISCOUNT:</span>
+                    <span>🪙 -<span id="discount-amount">0.0</span></span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; border-top: 2px dashed #ffffff; padding-top: 15px; margin-top: 5px;">
+                    <span class="total-label">> FINAL PROTOCOL COST:</span>
+                    <span class="total-amount">🪙 <span id="final-price">{{ total|floatformat:1 }}</span></span>
+                </div>
+
+            </div>
+
+            <form action="/checkout/" method="POST" style="margin: 0; padding: 0;">
+                {% csrf_token %}
+                <button type="submit" class="checkout-btn">> RUN CHECKOUT PROTOCOL</button>
+            </form>
+
+            <form action="/clear-cart/" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="pixel-btn cancel-btn">> ABORT ALL TASKS (CLEAR CART)</button>
+            </form>
+        {% endif %}
+    </div>
+
+    <script>
+        // 等待整个赛博页面加载完毕
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. 抓取页面上的元素
+            const basePrice = parseFloat(document.getElementById('base-price').innerText);
+            const discountSpan = document.getElementById('discount-amount');
+            const finalPriceSpan = document.getElementById('final-price');
+
+            // 2. 抓取所有的优惠券单选框
+            const couponRadios = document.querySelectorAll('input[name="selected_coupon_id"]');
+
+            // 3. 给每一个优惠券装上“监听器”
+            couponRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    // 当顾客点选某张券时，拿到它藏在 data-amount 里的面额
+                    let discount = parseFloat(this.getAttribute('data-amount')) || 0;
+
+                    // 算一下最终价格 (原价 - 优惠)
+                    let finalPrice = basePrice - discount;
+
+                    // 老板防破产系统：要是减成了负数，强制归零！
+                    if (finalPrice < 0) {
+                        finalPrice = 0;
+                    }
+
+                    // 4. 把算好的数字更新到屏幕上（保留一位小数）
+                    discountSpan.innerText = discount.toFixed(1);
+                    finalPriceSpan.innerText = finalPrice.toFixed(1);
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

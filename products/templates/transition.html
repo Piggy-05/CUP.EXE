@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>CUP.EXE - LOADING_MODULE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #050814; color: #ffffff;
+            font-family: 'Press Start 2P', cursive;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            height: 100vh; margin: 0;
+            background-image: radial-gradient(circle at 50% 50%, rgba(26, 42, 74, 0.8) 0%, transparent 70%);
+        }
+
+        .loading-title {
+            font-size: 16px; margin-bottom: 40px; text-shadow: 2px 2px #bc13fe;
+        }
+
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+
+        /* ================= 🌟 究极格子进度条 ================= */
+        .progress-box {
+            width: 400px;
+            height: 24px;
+            border: 4px solid #ffffff;
+            padding: 2px;
+            margin-bottom: 30px;
+            position: relative; /* 为遮罩层定位 */
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-bar {
+            height: 100%;
+            /* 🌟 超酷的电玩渐变色：从 霓虹青蓝 -> 赛博紫 -> 矩阵绿 */
+            background: linear-gradient(90deg, #00d2ff, #bc13fe, #00ff41);
+            width: 0%;
+
+            /* 🌟 核心魔法：steps(20, end) 强制分成 20 步！每步正好 5%！ */
+            animation: loadProgress 2.5s steps(20, end) forwards;
+            box-shadow: 0 0 10px #bc13fe;
+        }
+
+        /* 🌟 百叶窗遮罩层：把一长条渐变色“切”成 20 个格子 */
+        .progress-mask {
+            position: absolute;
+            top: 2px; left: 2px; right: 2px; bottom: 2px; /* 和 padding 内的进度条对齐 */
+            /* 画出黑色垂直线条，每 20px 画一条，形成断层效果 */
+            background-image: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 16px, /* 前 16px 掏空，露出渐变色 */
+                #050814 16px,     /* 后 4px 用背景色挡住，形成格子的间隙 */
+                #050814 20px
+            );
+        }
+
+        /* 动画从 0 走到 100% */
+        @keyframes loadProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        /* ==================================================== */
+
+        /* 游戏过场贴士/留言框 */
+        .tip-box {
+            width: 450px; text-align: center; font-size: 10px; color: #aaaaaa;
+            line-height: 1.8;
+            opacity: 0; animation: fadeIn 1s 0.5s forwards;
+        }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <div class="loading-title">
+        > {{ title }}<span class="blink">_</span>
+    </div>
+
+    <div class="progress-box">
+        <div class="progress-bar"></div>
+        <div class="progress-mask"></div>
+    </div>
+
+    <div class="tip-box">
+        {{ message }}
+    </div>
+
+    <script>
+        // 2.8 秒后自动跳转
+        setTimeout(function() {
+            window.location.replace("{{ next_url }}");
+        }, 2800);
+    </script>
+</body>
+</html>

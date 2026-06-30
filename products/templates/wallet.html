@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>CUP.EXE - USER_WALLET</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #050814;
+            color: #ffffff;
+            font-family: 'Press Start 2P', cursive;
+            margin: 0; padding: 0;
+            background-image: linear-gradient(rgba(26, 42, 74, 0.4) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(26, 42, 74, 0.4) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        .top-nav {
+            background-color: #0a0f24; border-bottom: 4px solid #ffffff;
+            padding: 20px 40px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-player { font-size: 14px; text-shadow: 2px 2px #bc13fe; }
+        .nav-controls a { color: #ffffff; text-decoration: none; margin-left: 30px; font-size: 12px; }
+        .nav-controls a:hover { color: #bc13fe; text-shadow: 0 0 10px #ffffff; }
+
+        .container { max-width: 800px; margin: 40px auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 50px; }
+        .title { font-size: 26px; text-shadow: 3px 3px #bc13fe; color: #ffffff; }
+
+        /* 优惠券芯片卡片 */
+        .coupon-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .coupon-card {
+            background-color: #0a0f24; border: 4px dashed #00ff41;
+            padding: 20px; position: relative; overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.1);
+            transition: 0.3s;
+        }
+        .coupon-card:hover {
+            border-style: solid;
+            box-shadow: 0 0 25px rgba(0, 255, 65, 0.4);
+            transform: translateY(-3px);
+        }
+        .coupon-meta { font-size: 10px; color: #888888; margin-bottom: 10px; }
+        .coupon-name { font-size: 12px; color: #00ff41; font-weight: bold; margin: 10px 0; }
+        .coupon-value { font-size: 18px; color: #ffffff; text-align: right; margin-top: 15px; }
+
+        .empty-msg { text-align: center; color: #ff0055; font-size: 14px; margin-top: 50px; text-shadow: 0 0 10px #ff0055;}
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <div class="nav-player">> ACCESSING WALLET: {{ request.user.username }}</div>
+        <div class="nav-controls">
+            <a href="/">[ HOME ]</a>
+            <a href="/cart/">[ CART ]</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="title">INVENTORY MODULE</h1>
+            <div style="font-size: 12px; color: #aaaaaa; margin-top: 10px;">>> DETECTED ASSETS: {{ count }} CHIPS <<</div>
+        </div>
+
+        {% if coupons %}
+            <div class="coupon-grid">
+                {% for coupon in coupons %}
+                    <div class="coupon-card">
+                        <div class="coupon-meta">SERIAL: #00{{ coupon.id }}</div>
+                        <div class="coupon-name">{{ coupon.name }}</div>
+                        <div style="font-size: 10px; color: #00bfff;">STATUS: ACTIVE READY</div>
+                        <div class="coupon-value">🪙 -{{ coupon.amount }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-msg">[ WARNING: NO VALUABLE ASSETS DETECTED. GO PLACE AN ORDER TO DRAW A LOOT BOX! ]</div>
+        {% endif %}
+    </div>
+
+</body>
+</html>

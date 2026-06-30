@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>CUP.EXE - SELECT_MODE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #050814;
+            color: #ffffff;
+            font-family: 'Press Start 2P', cursive;
+            margin: 0; padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: linear-gradient(rgba(26, 42, 74, 0.4) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(26, 42, 74, 0.4) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .top-nav {
+            position: absolute;      /* 抽离正常图层，不挤压底下的卡片 */
+            top: 0; left: 0;
+            width: 100%;
+            box-sizing: border-box; /* 防止 padding 撑爆屏幕出现横向滚动条 */
+            background-color: #0a0f24;
+            border-bottom: 4px solid #ffffff;
+            padding: 20px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.3);
+            z-index: 999;           /* 确保永远悬浮在最上层，不会被卡片挡住 */
+        }
+        .nav-player { font-size: 14px; text-shadow: 2px 2px #bc13fe; }
+        .nav-controls a { color: #ffffff; text-decoration: none; margin-left: 30px; font-size: 12px; transition: 0.2s; }
+        .nav-controls a:hover { color: #bc13fe; text-shadow: 0 0 10px #ffffff; }
+
+        .header-title {
+            font-size: 24px;
+            margin-bottom: 50px;
+            text-shadow: 2px 2px #bc13fe;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+
+        /* 模式选择容器，左右排列 */
+        .mode-container {
+            display: flex;
+            gap: 50px;
+        }
+
+        /* 模式卡片基础样式 */
+        .mode-card {
+            background-color: #0a0f24;
+            border: 4px solid #ffffff;
+            width: 300px;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* 内部文字布局 */
+        .mode-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .mode-desc {
+            font-size: 10px;
+            color: #aaaaaa;
+            text-align: center;
+            line-height: 1.8;
+            padding: 0 20px;
+        }
+
+        /* ================= 左边：官方模式特效 (紫光) ================= */
+        .card-classic:hover {
+            transform: translateY(-10px);
+            border-color: #bc13fe;
+            box-shadow: 0 0 30px rgba(188, 19, 254, 0.6);
+            color: #ffffff;
+        }
+        .card-classic:hover .mode-title { text-shadow: 0 0 10px #bc13fe; }
+
+        /* ================= 右边：DIY模式特效 (绿光) ================= */
+        .card-diy:hover {
+            transform: translateY(-10px);
+            border-color: #00ff41;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.6);
+            color: #ffffff;
+        }
+        .card-diy:hover .mode-title { text-shadow: 0 0 10px #00ff41; }
+
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <div class="nav-player">
+            > PLAYER ID: {{ request.user.username }}<span style="animation: blinker 1s linear infinite;">_</span>
+        </div>
+        <div class="nav-controls">
+            <a href="/wallet/" style="color: #00ff41; text-shadow: 0 0 5px #00ff41;">[ 🎒 INVENTORY ]</a>
+            <a href="/cart/">[ CART ]</a>
+            <a href="/logout/">[ LOGOUT ]</a>
+        </div>
+    </nav>
+
+    <div class="header-title">
+        > SELECT PROTOCOL<span class="blink">_</span>
+    </div>
+
+    <div class="mode-container">
+        <a href="/transition/classic/" class="mode-card card-classic">
+            <div class="mode-title">CLASSIC<br>MENU</div>
+            <div class="mode-desc">
+                Load official drink formulas from the system database.
+                <br><br>
+                [ RECOMMENDED FOR NEW PLAYERS ]
+            </div>
+        </a>
+
+        <a href="/transition/diy/" class="mode-card card-diy">
+            <div class="mode-title">CUSTOM<br>LAB</div>
+            <div class="mode-desc">
+                Access developer tools. Mix your own base fluids and flavor modules.
+                <br><br>
+                [ FOR ADVANCED USERS ]
+            </div>
+        </a>
+    </div>
+
+</body>
+</html>

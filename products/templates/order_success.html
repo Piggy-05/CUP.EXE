@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>CUP.EXE - EXECUTED_REWARD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* ================= 1. 恢复被冲掉的基础布局与环境光 ================= */
+        body {
+            background-color: #050814;
+            color: #ffffff;
+            font-family: 'Press Start 2P', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-image: radial-gradient(circle at 50% 50%, rgba(0, 255, 65, 0.08) 0%, transparent 60%);
+            overflow: hidden;
+        }
+
+        /* 成功提示窗口 - 让它重新变回那个炫酷的绿色控制台 */
+        .success-window {
+            background-color: #0a0f24;
+            border: 4px solid #00ff41;
+            box-shadow: 0 0 35px rgba(0, 255, 65, 0.3);
+            padding: 40px 60px;
+            width: 550px;
+            text-align: center;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .window-top { position: absolute; top: 10px; right: 15px; font-size: 14px; color: #888; }
+        .status-icon { font-size: 40px; color: #00ff41; text-shadow: 0 0 15px #00ff41; margin-bottom: 20px; }
+        .title { font-size: 18px; color: #ffffff; margin-bottom: 20px; text-shadow: 2px 2px #005515; line-height: 1.5; }
+        .message { font-size: 10px; color: #aaaaaa; line-height: 1.8; margin-bottom: 20px; }
+
+        /* ================= 2. 完美的像素盲盒动态效果 ================= */
+        .mystery-box-trigger {
+            background: none; border: none; cursor: pointer; padding: 0;
+            margin: 20px auto; display: block; outline: none; width: 100%; text-align: center;
+        }
+
+        /* 闭合盒子的像素图片样式 */
+        .pixel-box-img {
+            width: 140px;
+            height: auto;
+            image-rendering: pixelated; /* 开启硬核像素防模糊模式 */
+            animation: idleBounce 0.6s infinite alternate ease-in-out;
+            filter: drop-shadow(0 0 15px rgba(188, 19, 254, 0.4));
+        }
+
+        /* 鼠标悬停到闭合盒子上时：疯狂蓄力跳动 */
+        .mystery-box-trigger:hover .pixel-box-img {
+            animation: superBounce 0.15s infinite alternate ease-in-out;
+            filter: drop-shadow(0 0 25px #bc13fe);
+        }
+
+        /* 点击瞬间：由 JS 控制触发炸裂动画 */
+        .box-exploding {
+            animation: explodeEffect 0.3s forwards ease-out !important;
+        }
+
+        /* ================= 3. 抽中奖后的样式 ================= */
+        .open-box-img {
+            width: 160px; height: auto;
+            image-rendering: pixelated;
+            margin: 10px auto 20px;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 65, 0.5));
+        }
+
+        .coupon-result {
+            color: #ff0055; font-size: 14px; margin: 20px 0;
+            text-shadow: 0 0 15px #ff0055, 0 0 25px #ff0055;
+            border: 4px dashed #ff0055; padding: 20px;
+            line-height: 1.6;
+            animation: resultGlow 1s infinite alternate;
+        }
+
+        /* 底部返回按钮 */
+        .pixel-btn {
+            display: inline-block; background-color: transparent; color: #ffffff; border: 4px solid #ffffff;
+            font-family: 'Press Start 2P', cursive; font-size: 12px; padding: 15px 20px;
+            cursor: pointer; text-decoration: none; transition: all 0.2s; margin-top: 15px;
+        }
+        .pixel-btn:hover { background-color: #ffffff; color: #0a0f24; box-shadow: 0 0 20px #ffffff; }
+
+        /* ================= 4. 动画关键帧定义 ================= */
+        @keyframes idleBounce { 0% { transform: translateY(0); } 100% { transform: translateY(-10px); } }
+        @keyframes superBounce { 0% { transform: translateY(0); } 100% { transform: translateY(-15px); } }
+        @keyframes resultGlow { 0% { box-shadow: 0 0 10px #ff0055; } 100% { box-shadow: 0 0 25px #ff0055; } }
+
+        /* 炸裂动画效果 */
+        @keyframes explodeEffect {
+            0% { transform: scale(1); filter: drop-shadow(0 0 15px #bc13fe); }
+            50% { transform: scale(1.4) rotate(10deg); filter: drop-shadow(0 0 40px #ffea00); }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <div class="success-window">
+        <div class="window-top">_ □ X</div>
+        <div class="status-icon">✔</div>
+
+        {% if drawn_coupon %}
+            <h2 style="color: #00ff41; text-shadow: 0 0 10px #00ff41;">PROTOCOL RECEIVED</h2>
+
+            <img src="{% static 'box_open.png' %}" class="open-box-img" alt="BOX OPENED">
+
+            <div class="coupon-result">YOU UNLOCKED: <br><br>{{ drawn_coupon }}</div>
+            <div class="message">Saved to your Account ID. <br>Show this to the bartender next time!</div>
+            <a href="/menu/" class="pixel-btn">> RETURN TO MENU</a>
+
+        {% else %}
+            <h1 class="title">ORDER EXECUTED<span class="blink">_</span></h1>
+            <div class="message" style="color: #00bfff;">System detects an uncollected loot drop... <br>[CLICK BOX TO OPEN]</div>
+
+            <form id="drawForm" action="/success/" method="POST" style="margin: 0; padding: 0;">
+                {% csrf_token %}
+                <button type="submit" class="mystery-box-trigger">
+                    <img src="{% static 'box_closed.png' %}" class="pixel-box-img" id="boxImg" alt="MYSTERY BOX">
+                </button>
+            </form>
+
+            <script>
+                document.getElementById('drawForm').onsubmit = function(e) {
+                    var img = document.getElementById('boxImg');
+                    // 给图片套上炸裂动画类名
+                    img.classList.add('box-exploding');
+                    // 禁用点击防止玩家连点
+                    this.querySelector('.mystery-box-trigger').disabled = true;
+
+                    // 延迟 300 毫秒提交，让眼睛看爽爆炸动效
+                    setTimeout(function() {
+                        e.target.submit();
+                    }, 300);
+                    e.preventDefault();
+                };
+            </script>
+        {% endif %}
+    </div>
+
+</body>
+</html>
