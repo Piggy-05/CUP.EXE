@@ -37,7 +37,7 @@ class Order(models.Model):
     items_summary = models.TextField()
 
     # 3. 总金额
-    total_amount = models.IntegerField()
+    total_amount = models.FloatField()
 
     # 4. 下单时间
     created_at = models.DateTimeField(auto_now_add=True)
