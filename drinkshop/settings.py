@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -86,16 +87,15 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
+        # 限制 1：密码不能和 ID（用户名）、手机号太相似
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
+        # 限制 2：密码最少 4 位数
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'OPTIONS': {
+            'min_length': 4,  # 👈 在这里把原本默认的 8 强行改成 4！
+        }
     },
 ]
 
@@ -118,7 +118,5 @@ USE_TZ = True
 STATIC_URL = 'static/'
 LOGIN_REDIRECT_URL = '/register_loading/'
 
-
-
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 

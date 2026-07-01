@@ -214,18 +214,23 @@ def loading_view(request):
 @login_required(login_url='/login/')
 def add_diy_to_cart(request):
     if request.method == 'POST':
-        # 1. 抓取用户在网页上选的基底、配料，以及【新增的冰块选项】
-        base_info = request.POST.get('base')
+        # 1. 🌟 【核心升级】用 getlist 抓取用户在网页上选的【所有基底】
+        bases_info = request.POST.getlist('base')
         flavors_info = request.POST.getlist('flavor')
         touch_info = request.POST.getlist('touch')
         hardware_info = request.POST.get('hardware_cup')
 
-        # 2. 拆解基底的名字和价格
-        base_name, base_price = base_info.split('|')
-        total_price = float(base_price)
+        total_price = 0.0
 
-        # 开始给这杯新饮料起个炫酷的长名字
-        diy_drink_name = f"DIY: {base_name}"
+        # 2. 🌟 循环拆解所有的基底，累加价格和提取名字
+        base_names = []
+        for base in bases_info:
+            b_name, b_price = base.split('|')
+            total_price += float(b_price)  # 把每个勾选的基底价格加上去
+            base_names.append(b_name)
+
+        # 把名字拼起来，比如 "DIY: Classic Milk Tea + Cyber Coffee"
+        diy_drink_name = f"DIY: {' + '.join(base_names)}"
 
         # 3. 循环拆解配料，把名字加上去，价格也叠加上去
         for flavor in flavors_info:
@@ -238,23 +243,23 @@ def add_diy_to_cart(request):
             total_price += float(touch_price)
             diy_drink_name += f" + {touch_name}"
 
-        # 🌟 4. 【核心升级】在最后面加上冰块标签，比如变成 "DIY: Neon Soda + Dark Pearls [LESS_ICE]"
+        # 4. 在最后面加上杯子/硬件标签
         if hardware_info:
             cup_name, cup_price = hardware_info.split('|')
-            total_price += float(cup_price)  # 这里会精准加上前端传过来的 1 块钱
+            total_price += float(cup_price)
             diy_drink_name += f" + [{cup_name}]"
         else:
-            # 门禁保底：万一前端有黑客绕过，后端也强制扣除 1 块钱硬件费
+            # 门禁保底
             total_price += 1
             diy_drink_name += " + [STANDARD CUP]"
 
-        # 5. 直接在你的 Drink 仓库里现场捏造并保存一杯新饮料！
+        # 5. 直接现场捏造并保存一杯新饮料！
         item = {
             'name': diy_drink_name,
             'price': total_price
         }
 
-        # 6. 把这杯新诞生的饮料 ID 放进购物车小账本
+        # 6. 放进购物车小账本
         cart = request.session.get('cart', [])
         cart.append(item)
         request.session['cart'] = cart
@@ -315,5 +320,25 @@ def user_wallet(request):
     })
 
 
+def remove_item(request):
+    if request.method == 'POST':
+        # 获取顾客想要删除的那个物品的索引号（第几个）
+        item_index = request.POST.get('item_index')
 
+        # 拿出当前的购物车数据
+        cart = request.session.get('cart', [])
+
+        # 如果索引是有效的，就从列表里把它“踢出去”
+        if item_index is not None and cart:
+            try:
+                item_index = int(item_index)
+                if 0 <= item_index < len(cart):
+                    cart.pop(item_index)  # 踢出列表
+                    request.session['cart'] = cart  # 把更新后的购物车存回去
+                    request.session.modified = True
+            except ValueError:
+                pass
+
+    # 删完之后，让页面重新刷新回到购物车
+    return redirect('/cart/')
 

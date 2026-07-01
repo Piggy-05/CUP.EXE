@@ -157,7 +157,17 @@
                                 {% endif %}
                             </div>
                         </div>
-                        <div class="item-price">🪙 {{ item.price|floatformat:1 }}</div>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div class="item-price">🪙 {{ item.price|floatformat:1 }}</div>
+
+                            <form action="/remove-item/" method="POST" style="margin: 0; padding: 0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="item_index" value="{{ forloop.counter0 }}">
+                                <button type="submit" style="background: transparent; color: #ff0055; border: 2px solid #ff0055; font-family: 'Press Start 2P', cursive; font-size: 8px; padding: 5px 8px; cursor: pointer;">
+                                    [X] DROP
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 {% endfor %}
             </div>

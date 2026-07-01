@@ -36,8 +36,8 @@ urlpatterns = [
     path('add_diy_to_cart/', views.add_diy_to_cart),  # DIY 合成通道
     path('tng_qr/', views.tng_qr_view, name='tng_qr'),
     path('success/', views.success_view),
-    path('wallet/', views.user_wallet, name='wallet')
-
+    path('wallet/', views.user_wallet, name='wallet'),
+    path('remove-item/', views.remove_item, name='remove_item'),  # 购物车单项删除网线
 
 
 

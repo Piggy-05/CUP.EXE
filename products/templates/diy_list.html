@@ -104,23 +104,23 @@
             <div class="module-box">
                 <div class="module-title">> STEP 1: SELECT BASE LIQUID</div>
                 <label class="option-label">
-                    <input type="radio" name="base" value="Grapefruit Syrup|3.0" required>
+                    <input type="checkbox" name="base" value="Grapefruit Syrup|3.0" required>
                     [01] GRAPEFRUIT SYRUP <span class="price-tag">🪙 3.0</span>
                 </label>
                 <label class="option-label">
-                    <input type="radio" name="base" value="Jasmine Green Tea|2.5" required>
+                    <input type="checkbox" name="base" value="Jasmine Green Tea|2.5" required>
                     [02] JASMINE GREEN TEA <span class="price-tag">🪙 2.5</span>
                 </label>
                 <label class="option-label">
-                    <input type="radio" name="base" value="Strawberry Cordial|3.0" required>
+                    <input type="checkbox" name="base" value="Strawberry Cordial|3.0" required>
                     [03] STRAWBERRY CORDIAL <span class="price-tag">🪙 3.0</span>
                 </label>
                 <label class="option-label">
-                    <input type="radio" name="base" value="Blackcurrant Cordial|4.0" required>
+                    <input type="checkbox" name="base" value="Blackcurrant Cordial|4.0" required>
                     [04] BLACKCURRANT CORDIAL <span class="price-tag">🪙 4.0</span>
                 </label>
                 <label class="option-label">
-                    <input type="radio" name="base" value="Peach Syrup|3.0" required>
+                    <input type="checkbox" name="base" value="Peach Syrup|3.0" required>
                     [05] PEACH SYRUP <span class="price-tag">🪙 3.0</span>
                 </label>
             </div>
@@ -169,7 +169,7 @@
                 </label>
             </div>
 
-            <button type="submit" class="pixel-btn">> SYNTHESIZE & ADD_TO_CART</button>
+            <button type="submit" class="pixel-btn">> SYNTHESIZE & ADD TO CART</button>
         </form>
     </div>
 
@@ -192,6 +192,7 @@
         }
 
         // 🚀 启动保安系统！
+        enforceAtLeastOne('base');  // Step 1
         enforceAtLeastOne('flavor'); // 严格监控 Step 2
         enforceAtLeastOne('touch');  // 严格监控 Step 3
     </script>

@@ -125,19 +125,20 @@
 
             <div class="input-group">
                 <label for="id_username">> NEW ID:</label>
-                <input type="text" name="username" id="id_username" autocomplete="off" required>
+                <input type="text" name="username" id="id_username" autocomplete="off" value="{{ request.POST.username }}" required>
             </div>
 
             <div class="input-group">
                 <label for="id_phone">> PHONE NUMBER:</label>
                 <div style="display: flex; align-items: baseline;">
                     <span style="color: #bc13fe; font-size: 14px; margin-right: 10px; text-shadow: 0 0 5px #bc13fe;">+60</span>
-                    <input type="number" name="phone_number" id="id_phone" placeholder="Whatsapp phone number." required style="flex: 1;">
+                    <input type="number" name="phone_number" id="id_phone" placeholder="Whatsapp phone number." value="{{ request.POST.phone_number }}" required style="flex: 1;">
                 </div>
             </div>
 
             <div class="input-group">
                 <label for="id_password1">> CREATE PASSWORD:</label>
+                <div style="font-size: 8px; color: #00ff41; margin-bottom: 8px;">* ANY CHARACTERS ALLOWED (MIN 4)</div>
                 <input type="password" name="password1" id="id_password1" required>
             </div>
 
