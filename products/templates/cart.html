@@ -68,6 +68,36 @@
             white-space: nowrap;
         }
 
+        /* ================= 优惠券/模块框 专属排版 ================= */
+        .module-box {
+            background-color: #0a0f24;
+            border: 4px solid #00ff41;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .module-title {
+            font-size: 14px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 8px currentColor;
+        }
+        /* 🌟 核心修复：强制每个选项独占一行，并拉开间距 */
+        .option-label {
+            display: block;      /* 让它变成块级元素，强制换行 */
+            margin-bottom: 15px; /* 选项之间拉开 15px 的距离 */
+            font-size: 12px;
+            cursor: pointer;
+            line-height: 1.5;
+            transition: 0.2s;
+        }
+        /* 鼠标滑过时的高级发光反馈 */
+        .option-label:hover {
+            color: #ffffff !important;
+            text-shadow: 0 0 10px #ffffff;
+        }
+        .price-tag {
+            float: right; /* 把扣除的金额推到最右边对齐，看起来更整齐 */
+        }
+
         /* ================= 总价与结算控制台 ================= */
         .summary-box {
             border-top: 4px double #ffffff;
@@ -211,6 +241,8 @@
 
             <form action="/checkout/" method="POST" style="margin: 0; padding: 0;">
                 {% csrf_token %}
+                <input type="hidden" name="selected_coupon_id" id="hidden_coupon_input" value="none">
+
                 <button type="submit" class="checkout-btn">> RUN CHECKOUT PROTOCOL</button>
             </form>
 
@@ -249,6 +281,8 @@
                     // 4. 把算好的数字更新到屏幕上（保留一位小数）
                     discountSpan.innerText = discount.toFixed(1);
                     finalPriceSpan.innerText = finalPrice.toFixed(1);
+
+                    document.getElementById('hidden_coupon_input').value = this.value;
                 });
             });
         });
